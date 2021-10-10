@@ -12,6 +12,7 @@ pub struct Tweet {
     pub date_time: String,
     pub content: String
 }
+
 impl std::fmt::Display for Tweet {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "[{}] {} ({}): {}", self.id, self.date_time, self.epoch, self.content)
@@ -34,7 +35,6 @@ impl Site<Tweet> for Twitter {
         let date_time_selector = Selector::parse("span._timestamp").unwrap();
         let tweet_id_selector = Selector::parse("a.tweet-timestamp").unwrap();
 
-        // let i = for element in html_body.select(&content_selector) {
         html_body.select(&content_selector).map(|element| {
             let tweet = element.select(&tweet_contents_selector).next().unwrap().inner_html();
             let tweet_id = element.select(&tweet_id_selector).next().unwrap().value().attr("href").unwrap().split("/status/").last().unwrap().parse::<u64>().unwrap();
@@ -57,6 +57,7 @@ use std::{
 fn lines_from_file(filename: impl AsRef<Path>) -> io::Result<Vec<String>> {
     BufReader::new(File::open(filename)?).lines().collect()
 }
+
 #[test]
 fn should_extract_tweet_elements_from_html() {
     let body = lines_from_file("data/test/subset-of-twitter-page.html").expect("Could not load lines").join("\n");
